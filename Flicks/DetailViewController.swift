@@ -8,9 +8,10 @@
 
 import UIKit
 
-class DetailViewController: UIViewController {
+class DetailViewController: UIViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate {
 
   
+  @IBOutlet weak var posterImageCloseButton: UIButton!
   @IBOutlet weak var overviewLabel: UILabel!
   @IBOutlet weak var titleLabel: UILabel!
   @IBOutlet weak var posterImageView: UIImageView!
@@ -26,8 +27,8 @@ class DetailViewController: UIViewController {
         titleLabel.text = title
         overviewLabel.text = overview
       
-      
       overviewLabel.sizeToFit()
+      scrollView.delegate = self
       
       let baseUrl = "https://image.tmdb.org/t/p/original"
       
@@ -35,7 +36,7 @@ class DetailViewController: UIViewController {
         let posterUrl = NSURL(string: baseUrl + posterPath)
         posterImageView.setImageWithURL(posterUrl!)
       }
-        print(movie)
+      navigationController?.navigationItem.title = title
       
       scrollView.contentSize = CGSize(width: scrollView.frame.size.width, height: infoView.frame.origin.y + infoView.frame.size.height)
 
@@ -46,8 +47,17 @@ class DetailViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-
+  
+  
+  @IBAction func tappedPosterImage(sender: UITapGestureRecognizer) {
+    infoView.hidden = true
+    posterImageCloseButton.hidden = false
+  }
+  
+  func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView? {
+    return posterImageView
+  }
+  
     /*
     // MARK: - Navigation
 
