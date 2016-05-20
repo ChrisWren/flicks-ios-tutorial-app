@@ -34,6 +34,9 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
+### Offline
+![Imgur](http://i.imgur.com/NkdC8oU.png?1)
+
 <img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
