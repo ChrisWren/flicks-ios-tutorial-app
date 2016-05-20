@@ -42,7 +42,6 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     })
     refreshControl = UIRefreshControl()
     refreshControl!.addTarget(self, action: #selector(MoviesViewController.refreshControlAction(_:)), forControlEvents: UIControlEvents.ValueChanged)
-    movieTable.insertSubview(refreshControl!, atIndex: 0)
     AFNetworkReachabilityManager.sharedManager().startMonitoring()
     self.navigationController?.navigationBar.translucent = false
   }
@@ -58,14 +57,24 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     if listOrGridToggle == FlicksConstants.USER_DEFAULTS.LIST_OR_GRID_TOGGLE.GRID_VALUE {
       movieTable.hidden = true
       movieCollectionView.hidden = false
+      movieCollectionView.insertSubview(refreshControl!, atIndex: 0)
     } else {
       movieCollectionView.hidden = true
       movieTable.hidden = false
+      movieTable.insertSubview(refreshControl!, atIndex: 0)
     }
   }
   
   override func viewWillDisappear(animated: Bool) {
     movieSearchBar.resignFirstResponder()
+  }
+  
+  override func viewDidAppear(animated: Bool) {
+    var contentRect = CGRectZero
+    for view in movieCollectionView.subviews {
+      contentRect = CGRectUnion(contentRect, view.frame);
+    }
+    movieCollectionView.contentSize = contentRect.size;
   }
   
   func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
@@ -108,7 +117,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     cell.overviewLabel.text = overview
     
     if let posterPath = movie["poster_path"] as? String {
-      fetchImage(cell.posterImage, posterPath: posterPath)
+      MoviesViewController.fetchImage(cell.posterImage, posterPath: posterPath, fullSize: false)
     }
     
     return cell
@@ -118,8 +127,8 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     return filteredMovies?.count ?? 0
   }
   
-  func fetchImage(imageView: UIImageView, posterPath: String) {
-    let largeImageBaseUrl = "https://image.tmdb.org/t/p/w342"
+  static func fetchImage(imageView: UIImageView, posterPath: String, fullSize: Bool) {
+    let largeImageBaseUrl = fullSize ? "https://image.tmdb.org/t/p/original" : "https://image.tmdb.org/t/p/w342"
     let smallImageBaseUrl = "https://image.tmdb.org/t/p/w45"
     
       let smallImageRequest = NSURLRequest(URL: NSURL(string: smallImageBaseUrl + posterPath)!)
@@ -180,7 +189,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     cell.titleLabel.text! = title
     
     if let posterPath = movie["poster_path"] as? String {
-      fetchImage(cell.posterImage, posterPath: posterPath)
+      MoviesViewController.fetchImage(cell.posterImage, posterPath: posterPath, fullSize: false)
     }
     
     return cell

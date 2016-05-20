@@ -29,16 +29,13 @@ class DetailViewController: UIViewController, UIScrollViewDelegate, UIGestureRec
       
       overviewLabel.sizeToFit()
       scrollView.delegate = self
-      
-      let baseUrl = "https://image.tmdb.org/t/p/original"
+      scrollView.sizeToFit()
       
       if let posterPath = movie["poster_path"] as? String {
-        let posterUrl = NSURL(string: baseUrl + posterPath)
-        posterImageView.setImageWithURL(posterUrl!)
+        MoviesViewController.fetchImage(posterImageView, posterPath: posterPath, fullSize: true)
+
       }
-      navigationController?.navigationItem.title = title
-      
-      scrollView.contentSize = CGSize(width: scrollView.frame.size.width, height: infoView.frame.origin.y + infoView.frame.size.height)
+      self.title = title
 
         // Do any additional setup after loading the view.
     }
@@ -52,6 +49,11 @@ class DetailViewController: UIViewController, UIScrollViewDelegate, UIGestureRec
   @IBAction func tappedPosterImage(sender: UITapGestureRecognizer) {
     infoView.hidden = true
     posterImageCloseButton.hidden = false
+  }
+  
+  override func viewDidAppear(animated: Bool) {
+    infoView.sizeToFit()
+    scrollView.contentSize = CGSize(width: scrollView.frame.size.width, height: infoView.frame.origin.y + infoView.bounds.size.height + (navigationController?.navigationBar.frame.height)! + (tabBarController?.tabBar.frame.height)!)
   }
   
   func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView? {
